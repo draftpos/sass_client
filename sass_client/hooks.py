@@ -135,36 +135,23 @@ app_license = "mit"
 
 # Document Events
 # ---------------
-# Hook on document methods and events
+# Hook on document methods and events for user limit enforcement
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+	"User": {
+		"before_save": "sass_client.hooks.user_events.validate_user_limit",
+		"on_update": "sass_client.hooks.user_events.validate_user_limit"
+	}
+}
 
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"sass_client.tasks.all"
-# 	],
-# 	"daily": [
-# 		"sass_client.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"sass_client.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"sass_client.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"sass_client.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	"hourly": [
+		"sass_client.utils.client_tasks.hourly"
+	],
+}
 
 # Testing
 # -------
