@@ -53,6 +53,14 @@ def set_maintenance_mode(api_key, maintenance_mode):
 		# Update maintenance_mode
 		config["maintenance_mode"] = maintenance_mode
 		
+		# If enabling maintenance mode, also set allow_reads_during_maintenance
+		# This allows the maintenance API to still be accessible to remove maintenance mode
+		if maintenance_mode:
+			config["allow_reads_during_maintenance"] = True
+		# Optionally remove it when disabling maintenance mode (or leave it for future use)
+		# else:
+		# 	config.pop("allow_reads_during_maintenance", None)
+		
 		# Write back to file
 		with open(site_config_path, "w") as f:
 			json.dump(config, f, indent=2)

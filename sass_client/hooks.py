@@ -183,7 +183,7 @@ scheduler_events = {
 
 # Request Events
 # ----------------
-# before_request = ["sass_client.utils.before_request"]
+before_request = ["sass_client.utils.maintenance_bypass.bypass_maintenance_for_maintenance_api"]
 # after_request = ["sass_client.utils.after_request"]
 
 # Job Events
