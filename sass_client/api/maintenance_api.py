@@ -65,13 +65,29 @@ def set_maintenance_mode(api_key, maintenance_mode):
 		with open(site_config_path, "w") as f:
 			json.dump(config, f, indent=2)
 		
-		# Also update System Settings in database
-		system_settings = frappe.get_single("System Settings")
-		if maintenance_mode:
-			system_settings.enable_maintenance_mode = 1
-		else:
-			system_settings.enable_maintenance_mode = 0
-		system_settings.save(ignore_permissions=True)
+		# Also update System Settings in database (if not in read-only mode)
+		# Skip database update if site is in read-only mode during maintenance
+		# try:
+		# 	system_settings = frappe.get_single("System Settings")
+		# 	if maintenance_mode:
+		# 		system_settings.enable_maintenance_mode = 1
+		# 	else:
+		# 		system_settings.enable_maintenance_mode = 0
+		# 	system_settings.save(ignore_permissions=True)
+		# except frappe.InReadOnlyMode:
+		# 	# Site is in read-only mode, skip database update
+		# 	# The site_config.json update is sufficient for maintenance mode to work
+		# 	frappe.logger().info(
+		# 		f"Site is in read-only mode, skipping System Settings update. "
+		# 		f"Maintenance mode updated in site_config.json only."
+		# 	)
+		# except Exception as e:
+		# 	# Log other errors but don't fail the operation
+		# 	# The site_config.json update is the primary method and is already done
+		# 	frappe.log_error(
+		# 		f"Error updating System Settings for maintenance mode: {str(e)}",
+		# 		"Maintenance Mode Warning"
+		# 	)
 		
 		frappe.logger().info(f"Maintenance mode set to {maintenance_mode} for site {frappe.local.site}")
 		
