@@ -13,7 +13,7 @@ import os
 
 
 @frappe.whitelist(allow_guest=True)
-def set_maintenance_mode(api_key, maintenance_mode):
+def set_maintenance_mode(api_key, maintenance_mode, allow_reads_during_maintenance=None):
 	"""
 	Set maintenance mode for the client site
 	Called by sass_manager when site is activated/deactivated
@@ -21,6 +21,7 @@ def set_maintenance_mode(api_key, maintenance_mode):
 	Args:
 		api_key: API key for authentication (must match saas_api_key in site_config)
 		maintenance_mode: 1 to enable, 0 to disable
+		allow_reads_during_maintenance: True/1 to allow reads, False/0 to disallow (optional)
 	
 	Returns:
 		dict: Status of the operation
@@ -53,13 +54,28 @@ def set_maintenance_mode(api_key, maintenance_mode):
 		# Update maintenance_mode
 		config["maintenance_mode"] = maintenance_mode
 		
-		# If enabling maintenance mode, also set allow_reads_during_maintenance
-		# This allows the maintenance API to still be accessible to remove maintenance mode
+		# Handle allow_reads_during_maintenance
+		# If explicitly provided, use that value; otherwise default based on maintenance_mode
+		if allow_reads_during_maintenance is not None:
+			# Convert to boolean/int if it's a string
+			if isinstance(allow_reads_during_maintenance, str):
+				allow_reads_during_maintenance = allow_reads_during_maintenance.lower() in ('true', '1', 'yes')
+			allow_reads_during_maintenance = bool(allow_reads_during_maintenance)
+		else:
+			# Default behavior: if enabling maintenance mode, allow reads (for API access)
+			# If disabling, remove the setting (or keep it if already set)
+			allow_reads_during_maintenance = bool(maintenance_mode)
+		
 		if maintenance_mode:
-			config["allow_reads_during_maintenance"] = True
-		# Optionally remove it when disabling maintenance mode (or leave it for future use)
-		# else:
-		# 	config.pop("allow_reads_during_maintenance", None)
+			# Only set if enabling maintenance mode
+			if allow_reads_during_maintenance:
+				config["allow_reads_during_maintenance"] = True
+			else:
+				# Remove if explicitly set to False
+				config.pop("allow_reads_during_maintenance", None)
+		else:
+			# When disabling maintenance mode, remove the setting
+			config.pop("allow_reads_during_maintenance", None)
 		
 		# Write back to file
 		with open(site_config_path, "w") as f:
