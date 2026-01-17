@@ -139,8 +139,8 @@ app_license = "mit"
 
 doc_events = {
 	"User": {
-		"before_save": "sass_client.hooks.user_events.validate_user_limit",
-		"on_update": "sass_client.hooks.user_events.validate_user_limit"
+		"before_save": "sass_client.utils.user_events.validate_user_limit",
+		"on_update": "sass_client.utils.user_events.validate_user_limit"
 	}
 }
 
