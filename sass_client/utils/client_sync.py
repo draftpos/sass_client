@@ -70,14 +70,31 @@ def get_site_data():
 		package_status = "Active" if site_config.get("subscription_active", False) else "Expired"
 		
 		# Convert dates to strings if they are date objects (for JSON serialization)
-		from frappe.utils import formatdate
-		subscription_start_date = site_config.get("subscription_start_date")
-		if subscription_start_date and not isinstance(subscription_start_date, str):
-			subscription_start_date = formatdate(subscription_start_date, "yyyy-mm-dd")
+		from frappe.utils import formatdate, getdate
+		from datetime import date, datetime
 		
-		subscription_end_date = site_config.get("subscription_end_date")
-		if subscription_end_date and not isinstance(subscription_end_date, str):
-			subscription_end_date = formatdate(subscription_end_date, "yyyy-mm-dd")
+		def convert_date_to_string(date_value):
+			"""Convert date to string in yyyy-mm-dd format"""
+			if not date_value:
+				return None
+			try:
+				# If it's already a string, parse and reformat to ensure consistency
+				if isinstance(date_value, str):
+					parsed_date = getdate(date_value)
+					return formatdate(parsed_date, "yyyy-mm-dd")
+				# If it's a date or datetime object, format it
+				elif isinstance(date_value, (date, datetime)):
+					return formatdate(date_value, "yyyy-mm-dd")
+				# For any other type, try to convert
+				else:
+					parsed_date = getdate(str(date_value))
+					return formatdate(parsed_date, "yyyy-mm-dd")
+			except (ValueError, TypeError):
+				# If conversion fails, return None
+				return None
+		
+		subscription_start_date = convert_date_to_string(site_config.get("subscription_start_date"))
+		subscription_end_date = convert_date_to_string(site_config.get("subscription_end_date"))
 		
 		return {
 			"company": company_name,
