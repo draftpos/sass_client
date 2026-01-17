@@ -150,7 +150,7 @@ def sync_to_main_app():
 			else:
 				frappe.log_error(f"SaaS sync failed: {result.get('message', {}).get('message')}", "SaaS Sync Error")
 		else:
-			frappe.log_error(f"SaaS sync HTTP error: {response.status_code}", "SaaS Sync Error")
+			frappe.log_error("SaaS Sync Error", f"SaaS sync HTTP error: {response.text}")
 			
 	except Exception as e:
 		frappe.log_error(f"Error syncing to main app: {str(e)}", "SaaS Sync Error")
