@@ -68,8 +68,16 @@ def get_site_data():
 		# Get subscription info from custom fields or site config
 		subscription_package = site_config.get("subscription_package")
 		package_status = "Active" if site_config.get("subscription_active", False) else "Expired"
+		
+		# Convert dates to strings if they are date objects (for JSON serialization)
+		from frappe.utils import formatdate
 		subscription_start_date = site_config.get("subscription_start_date")
+		if subscription_start_date and not isinstance(subscription_start_date, str):
+			subscription_start_date = formatdate(subscription_start_date, "yyyy-mm-dd")
+		
 		subscription_end_date = site_config.get("subscription_end_date")
+		if subscription_end_date and not isinstance(subscription_end_date, str):
+			subscription_end_date = formatdate(subscription_end_date, "yyyy-mm-dd")
 		
 		return {
 			"company": company_name,
