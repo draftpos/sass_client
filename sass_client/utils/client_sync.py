@@ -10,6 +10,7 @@ import frappe
 from frappe import _
 from frappe.utils import get_url
 import requests
+import json
 
 
 def get_site_data():
@@ -127,13 +128,18 @@ def sync_to_main_app():
 		# Prepare API endpoint
 		api_endpoint = f"{main_app_url}/api/method/sass_manager.api.site_api.sync_site_data"
 		
-		# Make API call
+		# Make API call with proper headers (use data parameter to avoid 417 error)
+		headers = {
+			"Content-Type": "application/json",
+		}
+		payload = {
+			"api_key": api_key,
+			"data": data
+		}
 		response = requests.post(
 			api_endpoint,
-			json={
-				"api_key": api_key,
-				"data": data
-			},
+			data=json.dumps(payload),
+			headers=headers,
 			timeout=30
 		)
 		
@@ -166,9 +172,14 @@ def check_user_limit():
 		
 		# Get subscription status
 		api_endpoint = f"{main_app_url}/api/method/sass_manager.api.site_api.get_subscription_status"
+		headers = {
+			"Content-Type": "application/json",
+		}
+		payload = {"api_key": api_key}
 		response = requests.post(
 			api_endpoint,
-			json={"api_key": api_key},
+			data=json.dumps(payload),
+			headers=headers,
 			timeout=10
 		)
 		
@@ -223,15 +234,20 @@ def register_client_site(site_name, company=None, client_type="ERP"):
 		
 		# Register site
 		api_endpoint = f"{main_app_url}/api/method/sass_manager.api.site_api.register_site"
+		headers = {
+			"Content-Type": "application/json",
+		}
+		payload = {
+			"site_url": site_url,
+			"site_name": site_name,
+			"company": company,
+			"client_type": client_type,
+			"ip_address": ip_address
+		}
 		response = requests.post(
 			api_endpoint,
-			json={
-				"site_url": site_url,
-				"site_name": site_name,
-				"company": company,
-				"client_type": client_type,
-				"ip_address": ip_address
-			},
+			data=json.dumps(payload),
+			headers=headers,
 			timeout=30
 		)
 		
