@@ -37,7 +37,17 @@ def get_site_data():
 		client_type = site_config.get("client_type", "ERP")
 		
 		# Get IP address
-		ip_address = frappe.get_request_header("X-Forwarded-For") or frappe.get_request_header("X-Real-IP") or (frappe.local.request.remote_addr if hasattr(frappe.local, 'request') and hasattr(frappe.local.request, 'remote_addr') else "Unknown")
+		ip_address = "Unknown"
+		try:
+			if hasattr(frappe.local, 'request') and frappe.local.request:
+				ip_address = (
+					frappe.get_request_header("X-Forwarded-For") or 
+					frappe.get_request_header("X-Real-IP") or 
+					getattr(frappe.local.request, 'remote_addr', "Unknown")
+				)
+		except (AttributeError, TypeError):
+			# If request object is not available (e.g., in scheduled tasks), use default
+			pass
 		
 		# Get site URL
 		site_url = get_url()
@@ -101,7 +111,8 @@ def sync_to_main_app():
 			companies = frappe.get_all("Company", fields=["name"])
 			company_name = companies[0].name if companies else None
 			client_type = site_config.get("client_type", "ERP")
-			site_name = frappe.db.get_single_value("System Settings", "system_name") or frappe.conf.get("site_name") or "ERPNext Site"
+			# Get site name from site config or use site name from frappe.local
+			site_name = site_config.get("site_name") or frappe.local.site or "ERPNext Site"
 			
 			api_key = register_client_site(site_name, company_name, client_type)
 			if not api_key:
@@ -197,7 +208,18 @@ def register_client_site(site_name, company=None, client_type="ERP"):
 			return None
 		
 		site_url = get_url()
-		ip_address = frappe.get_request_header("X-Forwarded-For") or frappe.get_request_header("X-Real-IP") or (frappe.local.request.remote_addr if hasattr(frappe.local, 'request') and hasattr(frappe.local.request, 'remote_addr') else "Unknown")
+		# Get IP address safely
+		ip_address = "Unknown"
+		try:
+			if hasattr(frappe.local, 'request') and frappe.local.request:
+				ip_address = (
+					frappe.get_request_header("X-Forwarded-For") or 
+					frappe.get_request_header("X-Real-IP") or 
+					getattr(frappe.local.request, 'remote_addr', "Unknown")
+				)
+		except (AttributeError, TypeError):
+			# If request object is not available, use default
+			pass
 		
 		# Register site
 		api_endpoint = f"{main_app_url}/api/method/sass_manager.api.site_api.register_site"
