@@ -173,7 +173,7 @@ def sync_to_main_app():
 			if result.get("message", {}).get("status") == "success":
 				frappe.logger().info("SaaS sync successful: %s", result.get("message", {}).get("sync_id"))
 			else:
-				frappe.log_error(f"SaaS sync failed: {result.get('message', {}).get('message')}", "SaaS Sync Error")
+				frappe.log_error("SaaS Sync Error", f"SaaS sync failed: {result.get('message', {}).get('message')}")
 		else:
 			frappe.log_error("SaaS Sync Error", f"SaaS sync HTTP error: {response.text}")
 			
