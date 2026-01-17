@@ -126,7 +126,7 @@ def sync_to_main_app():
 			return
 		
 		# Prepare API endpoint
-		api_endpoint = f"{main_app_url}/api/method/sass_manager.api.site_api.sync_site_data"
+		api_endpoint = f"{main_app_url}/api/method/sass_manager.sass_manager.api.site_api.sync_site_data"
 		
 		# Make API call with proper headers (use data parameter to avoid 417 error)
 		headers = {
@@ -171,7 +171,7 @@ def check_user_limit():
 			return True
 		
 		# Get subscription status
-		api_endpoint = f"{main_app_url}/api/method/sass_manager.api.site_api.get_subscription_status"
+		api_endpoint = f"{main_app_url}/api/method/sass_manager.sass_manager.api.site_api.get_subscription_status"
 		headers = {
 			"Content-Type": "application/json",
 		}
@@ -233,7 +233,7 @@ def register_client_site(site_name, company=None, client_type="ERP"):
 			pass
 		
 		# Register site
-		api_endpoint = f"{main_app_url}/api/method/sass_manager.api.site_api.register_site"
+		api_endpoint = f"{main_app_url}/api/method/sass_manager.sass_manager.api.site_api.register_site"
 		headers = {
 			"Content-Type": "application/json",
 		}

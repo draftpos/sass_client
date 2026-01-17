@@ -8,6 +8,8 @@ This module enforces user limits based on subscription package
 
 import frappe
 from frappe import _
+import requests
+import json
 
 
 def enforce_user_limit():
@@ -43,10 +45,15 @@ def get_max_users():
 			return 0  # Unlimited
 		
 		import requests
-		api_endpoint = f"{main_app_url}/api/method/sass_manager.api.site_api.get_subscription_status"
+		api_endpoint = f"{main_app_url}/api/method/sass_manager.sass_manager.api.site_api.get_subscription_status"
+		headers = {
+			"Content-Type": "application/json",
+		}
+		payload = {"api_key": api_key}
 		response = requests.post(
 			api_endpoint,
-			json={"api_key": api_key},
+			data=json.dumps(payload),
+			headers=headers,
 			timeout=10
 		)
 		
