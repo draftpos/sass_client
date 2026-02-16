@@ -1,0 +1,233 @@
+{
+ "actions": [],
+ "autoname": "autoincrement",
+ "creation": "2026-02-11 14:30:13.212508",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "server_ip",
+  "url",
+  "product_type",
+  "column_break_qgsw",
+  "site_name",
+  "default_company",
+  "assigned",
+  "section_break_kcgz",
+  "date_filter",
+  "column_break_etlh",
+  "filter_type",
+  "section_break_jfmr",
+  "total_sales_invoices_count",
+  "total_purchases_count",
+  "column_break_rhzt",
+  "total_sales_invoices_amount",
+  "total_purchase_invoice_value",
+  "profit_and_loss_section",
+  "sales",
+  "column_break_buxl",
+  "expenses",
+  "column_break_gadn",
+  "net_profit",
+  "section_break_wpha",
+  "stock_reconciliations",
+  "column_break_twox",
+  "stock_entries_with_transfers",
+  "section_break_yivo",
+  "total_active_users_connected_within_one_day",
+  "total_active_cost_centers",
+  "column_break_etfi",
+  "total_active_warehouses",
+  "any_transaction_today"
+ ],
+ "fields": [
+  {
+   "fieldname": "server_ip",
+   "fieldtype": "Data",
+   "label": "Server ip"
+  },
+  {
+   "fieldname": "url",
+   "fieldtype": "Data",
+   "label": "URL"
+  },
+  {
+   "fieldname": "column_break_qgsw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "site_name",
+   "fieldtype": "Data",
+   "label": "Site Name"
+  },
+  {
+   "fieldname": "default_company",
+   "fieldtype": "Link",
+   "label": "Default company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "section_break_kcgz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_sales_invoices_count",
+   "fieldtype": "Int",
+   "label": "Total Sales Invoices Count "
+  },
+  {
+   "fieldname": "section_break_jfmr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_rhzt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_sales_invoices_amount",
+   "fieldtype": "Int",
+   "label": "Total Sales Invoices Amount"
+  },
+  {
+   "fieldname": "total_purchases_count",
+   "fieldtype": "Int",
+   "label": "Total Purchases Count"
+  },
+  {
+   "fieldname": "total_purchase_invoice_value",
+   "fieldtype": "Int",
+   "label": "Total Purchase Invoice Value\u00a0"
+  },
+  {
+   "fieldname": "profit_and_loss_section",
+   "fieldtype": "Section Break",
+   "label": " Profit and Loss"
+  },
+  {
+   "fieldname": "sales",
+   "fieldtype": "Int",
+   "label": "Sales"
+  },
+  {
+   "fieldname": "column_break_buxl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "expenses",
+   "fieldtype": "Int",
+   "label": "Expenses"
+  },
+  {
+   "fieldname": "column_break_gadn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "net_profit",
+   "fieldtype": "Int",
+   "label": "Net Profit"
+  },
+  {
+   "fieldname": "section_break_wpha",
+   "fieldtype": "Section Break",
+   "label": "Stock"
+  },
+  {
+   "fieldname": "stock_reconciliations",
+   "fieldtype": "Float",
+   "label": "Stock Reconciliations"
+  },
+  {
+   "fieldname": "column_break_twox",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "stock_entries_with_transfers",
+   "fieldtype": "Float",
+   "label": "Stock entries with transfers"
+  },
+  {
+   "fieldname": "section_break_yivo",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_active_users_connected_within_one_day",
+   "fieldtype": "Int",
+   "label": "  Total active users (connected within one day)"
+  },
+  {
+   "fieldname": "total_active_cost_centers",
+   "fieldtype": "Int",
+   "label": "Total active cost centers"
+  },
+  {
+   "fieldname": "column_break_etfi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_active_warehouses",
+   "fieldtype": "Int",
+   "label": "Total active warehouses"
+  },
+  {
+   "fieldname": "any_transaction_today",
+   "fieldtype": "Select",
+   "label": "Any Transaction Today",
+   "options": "No\nYes"
+  },
+  {
+   "fieldname": "column_break_etlh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "filter_type",
+   "fieldtype": "Select",
+   "label": "Filter Type",
+   "options": "On Day\nUp To Date"
+  },
+  {
+   "fieldname": "date_filter",
+   "fieldtype": "Date",
+   "label": "Date Filter"
+  },
+  {
+   "fieldname": "product_type",
+   "fieldtype": "Link",
+   "label": "Product Type",
+   "options": "Product Type"
+  },
+  {
+   "default": "0",
+   "fieldname": "assigned",
+   "fieldtype": "Check",
+   "label": "Assigned",
+   "options": "Yes\nNo"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-02-16 15:15:16.263572",
+ "modified_by": "Administrator",
+ "module": "Sass Client",
+ "name": "Client Details",
+ "naming_rule": "Autoincrement",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

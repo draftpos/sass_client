@@ -1,121 +1,125 @@
-# Copyright (c) 2025, nasirucode and Contributors
-# License: MIT. See LICENSE
-
-"""
-Client-side utilities for syncing data to main SaaS manager
-This module should be installed on client ERPNext instances
-"""
-
 import frappe
 from frappe import _
 from frappe.utils import get_url
 import requests
 import json
-
+import frappe
+from frappe.utils import today
 
 def get_site_data():
-	"""
-	Collect all site data to be synced to main SaaS manager
-	
-	Returns:
-		dict: Site data dictionary
-	"""
-	try:
-		# Get site configuration
-		site_config = frappe.conf
-		main_app_url = site_config.get("saas_manager_url")
-		api_key = site_config.get("saas_api_key")
-		
-		if not main_app_url:
-			frappe.log_error("SaaS Manager URL not configured", "SaaS Sync Error")
-			return None
-		
-		# Get company information
-		companies = frappe.get_all("Company", fields=["name"])
-		company_name = companies[0].name if companies else None
-		
-		# Get client type from site config or default to ERP
-		client_type = site_config.get("client_type", "ERP")
-		
-		# Get IP address
-		ip_address = "Unknown"
-		try:
-			if hasattr(frappe.local, 'request') and frappe.local.request:
-				ip_address = (
-					frappe.get_request_header("X-Forwarded-For") or 
-					frappe.get_request_header("X-Real-IP") or 
-					getattr(frappe.local.request, 'remote_addr', "Unknown")
-				)
-		except (AttributeError, TypeError):
-			# If request object is not available (e.g., in scheduled tasks), use default
-			pass
-		
-		# Get site URL
-		site_url = get_url()
-		
-		# Count transactions
-		total_sales_invoices = frappe.db.count("Sales Invoice", {"docstatus": 1})
-		total_credit_notes = frappe.db.count("Sales Invoice", {"docstatus": 1, "is_return": 1})
-		total_purchase_invoices = frappe.db.count("Purchase Invoice", {"docstatus": 1})
-		total_stock_reconciliations = frappe.db.count("Stock Reconciliation", {"docstatus": 1})
-		
-		# Count active users
-		active_users = frappe.db.count("User", {"enabled": 1, "name": ["!=", "Guest"]})
-		
-		# Count companies
-		total_companies = len(companies)
-		
-		# Get subscription info from custom fields or site config
-		subscription_package = site_config.get("subscription_package")
-		package_status = "Active" if site_config.get("subscription_active", False) else "Expired"
-		
-		# Convert dates to strings if they are date objects (for JSON serialization)
-		from frappe.utils import formatdate, getdate
-		from datetime import date, datetime
-		
-		def convert_date_to_string(date_value):
-			"""Convert date to string in yyyy-mm-dd format"""
-			if not date_value:
-				return None
-			try:
-				# If it's already a string, parse and reformat to ensure consistency
-				if isinstance(date_value, str):
-					parsed_date = getdate(date_value)
-					return formatdate(parsed_date, "yyyy-mm-dd")
-				# If it's a date or datetime object, format it
-				elif isinstance(date_value, (date, datetime)):
-					return formatdate(date_value, "yyyy-mm-dd")
-				# For any other type, try to convert
-				else:
-					parsed_date = getdate(str(date_value))
-					return formatdate(parsed_date, "yyyy-mm-dd")
-			except (ValueError, TypeError):
-				# If conversion fails, return None
-				return None
-		
-		subscription_start_date = convert_date_to_string(site_config.get("subscription_start_date"))
-		subscription_end_date = convert_date_to_string(site_config.get("subscription_end_date"))
-		
-		return {
-			"company": company_name,
-			"client_type": client_type,
-			"total_sales_invoices": total_sales_invoices,
-			"total_credit_notes": total_credit_notes,
-			"total_purchase_invoices": total_purchase_invoices,
-			"total_stock_reconciliations": total_stock_reconciliations,
-			"active_users": active_users,
-			"total_companies": total_companies,
-			"ip_address": ip_address,
-			"site_url": site_url,
-			"subscription_package": subscription_package,
-			"package_status": package_status,
-			"subscription_start_date": subscription_start_date,
-			"subscription_end_date": subscription_end_date
-		}
-	except Exception as e:
-		frappe.log_error(f"Error collecting site data: {str(e)}", "SaaS Sync Error")
-		return None
+    """
+    Collect all site data to be synced to main SaaS manager
+    Returns:
+        dict: Site data dictionary
+    """
+    try:
+        # Get site configuration
+        site_config = frappe.conf
+        main_app_url = site_config.get("saas_manager_url")
+        api_key = site_config.get("saas_api_key")
 
+        if not main_app_url:
+            frappe.log_error("SaaS Manager URL not configured", "SaaS Sync Error")
+            return None
+
+        # Get company information
+        companies = frappe.get_all("Company", fields=["name"])
+        company_name = companies[0].name if companies else None
+
+        # Get client type
+        client_type = site_config.get("client_type", "ERP")
+
+        # Get IP address
+        ip_address = "Unknown"
+        try:
+            if hasattr(frappe.local, "request") and frappe.local.request:
+                ip_address = (
+                    frappe.get_request_header("X-Forwarded-For")
+                    or frappe.get_request_header("X-Real-IP")
+                    or getattr(frappe.local.request, "remote_addr", "Unknown")
+                )
+        except (AttributeError, TypeError):
+            pass
+
+        # Get site URL
+        site_url = get_url()
+
+        # Count transactions
+        total_sales_invoices = frappe.db.count("Sales Invoice", {"docstatus": 1})
+        total_credit_notes = frappe.db.count(
+            "Sales Invoice", {"docstatus": 1, "is_return": 1}
+        )
+        total_purchase_invoices = frappe.db.count("Purchase Invoice", {"docstatus": 1})
+        total_stock_reconciliations = frappe.db.count(
+            "Stock Reconciliation", {"docstatus": 1}
+        )
+
+        # Count active users today
+        active_users_today = frappe.db.count(
+            "Login Tracker", {"login_time": today()}
+        )
+
+        total_companies = len(companies)
+
+        # Subscription info
+        subscription_package = site_config.get("subscription_package")
+        package_status = (
+            "Active" if site_config.get("subscription_active", False) else "Expired"
+        )
+
+        # Date helper
+        from frappe.utils import formatdate, getdate
+        from datetime import date, datetime
+
+        def convert_date_to_string(date_value):
+            if not date_value:
+                return None
+            try:
+                if isinstance(date_value, str):
+                    parsed_date = getdate(date_value)
+                elif isinstance(date_value, (date, datetime)):
+                    parsed_date = date_value
+                else:
+                    parsed_date = getdate(str(date_value))
+
+                return formatdate(parsed_date, "yyyy-mm-dd")
+            except (ValueError, TypeError):
+                return None
+
+        # ✅ SINGLE DOCTYPE (correct place + indentation)
+        client_profile = frappe.get_single("Client Profile")
+
+        subscription_start_date = convert_date_to_string(
+            client_profile.subscription_start_date
+        )
+        subscription_end_date = convert_date_to_string(
+            client_profile.subscription_end_date
+        )
+
+        return {
+            "company": company_name,
+            "client_type": client_type,
+            "total_sales_invoices": total_sales_invoices,
+            "total_credit_notes": total_credit_notes,
+            "total_purchase_invoices": total_purchase_invoices,
+            "total_stock_reconciliations": total_stock_reconciliations,
+            "active_users": frappe.db.count(
+                "User", {"enabled": 1, "last_login": [">=", today()]}
+            ),
+            "total_companies": total_companies,
+            "ip_address": ip_address,
+            "site_url": site_url,
+            "subscription_package": subscription_package,
+            "package_status": package_status,
+            "subscription_start_date": subscription_start_date,
+            "subscription_end_date": subscription_end_date,
+        }
+
+    except Exception as e:
+        frappe.log_error(
+            f"Error collecting site data: {str(e)}", "SaaS Sync Error"
+        )
+        return None
 
 def sync_to_main_app():
 	"""
@@ -288,7 +292,6 @@ def register_client_site(site_name, company=None, client_type="ERP"):
 				return api_key
 			else:
 				frappe.log_error(f"Registration failed: {reg_data.get('message')}", "SaaS Registration Error")
-		
 		return None
 	except Exception as e:
 		frappe.log_error(f"Error registering client site: {str(e)}", "SaaS Registration Error")

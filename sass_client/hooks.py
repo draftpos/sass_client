@@ -234,3 +234,5 @@ before_request = ["sass_client.utils.maintenance_bypass.bypass_maintenance_for_m
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
 
+
+on_login = "sass_client.api.create_defaults.track_login"

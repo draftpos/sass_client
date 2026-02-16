@@ -14,7 +14,6 @@ def bypass_maintenance_for_maintenance_api():
 	Allow maintenance API endpoint to bypass maintenance mode
 	This hook is called before_request to allow the maintenance API
 	to be accessible even when the site is in maintenance mode
-	
 	Note: Frappe checks maintenance_mode in app.py before before_request hooks,
 	so this may not work. The endpoint should still be accessible if allow_reads_during_maintenance
 	is set in site_config.json, or maintenance mode needs to be removed manually.

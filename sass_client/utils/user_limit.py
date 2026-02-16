@@ -23,7 +23,6 @@ def enforce_user_limit():
 		if not site_config.get("saas_manager_url") or not site_config.get("saas_api_key"):
 			# If not configured, allow unlimited users
 			return
-		
 		from sass_client.utils.client_sync import check_user_limit
 		check_user_limit()
 	except Exception as e:
@@ -64,7 +63,6 @@ def get_max_users():
 			if status_data.get("status") == "success":
 				package_details = status_data.get("package_details", {})
 				return package_details.get("max_users", 0)
-		
 		return 0
 	except Exception as e:
 		frappe.log_error(f"Error getting max users: {str(e)}", "SaaS Max Users")
