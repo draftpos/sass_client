@@ -1,9 +1,21 @@
-# Copyright (c) 2026, nasirucode and contributors
-# For license information, please see license.txt
 
-# import frappe
-from frappe.model.document import Document
+import frappe
+from frappe.utils import getdate, nowdate
 
+class ClientProfile(frappe.model.document.Document):
 
-class ClientProfile(Document):
-	pass
+    def before_save(self):
+        self.calculate_days_left()
+
+    def calculate_days_left(self):
+        if not self.subscription_end_date:
+            self.days_left = 0
+            return
+
+        today = getdate(nowdate())
+        end_date = getdate(self.subscription_end_date)
+
+        diff = (end_date - today).days
+
+        # Never go negative (optional but recommended)
+        self.days_left = max(diff, 0)

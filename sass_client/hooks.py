@@ -235,4 +235,4 @@ before_request = ["sass_client.utils.maintenance_bypass.bypass_maintenance_for_m
 # ignore_translatable_strings_from = []
 
 
-on_login = "sass_client.api.create_defaults.track_login"
+on_login = "sass_client.utils.client_sync.enqueue_sync_to_main_app"

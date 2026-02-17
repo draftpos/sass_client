@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "subscription_start_date",
+  "days_left",
   "column_break_ctpj",
   "subscription_end_date",
   "section_break_jrod",
@@ -44,13 +45,18 @@
    "fieldtype": "Table",
    "label": "Subscription History",
    "options": "Client Sub History"
+  },
+  {
+   "fieldname": "days_left",
+   "fieldtype": "Int",
+   "label": "Days Left"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-02-16 15:50:10.787106",
+ "modified": "2026-02-17 09:12:20.028266",
  "modified_by": "Administrator",
  "module": "Sass Client",
  "name": "Client Profile",
