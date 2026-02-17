@@ -180,7 +180,8 @@ def sync_to_main_app():
 	"""
 	try:
 		site_config = frappe.conf
-		main_app_url = site_config.get("saas_manager_url")
+		# main_app_url = site_config.get("saas_manager_url")
+		main_app_url = "https://pay.havano.cloud/"
 		api_key = site_config.get("saas_api_key")
 		
 		if not main_app_url:
