@@ -219,7 +219,7 @@ before_request = ["sass_client.utils.maintenance_bypass.bypass_maintenance_for_m
 # --------------------------------
 
 # auth_hooks = [
-# 	"sass_client.auth.validate"
+# 	"sass_client.utils.client_sync.block_if_subscription_expired"
 # ]
 
 # Automatically update python controller files with type annotations for this app.
@@ -236,3 +236,5 @@ before_request = ["sass_client.utils.maintenance_bypass.bypass_maintenance_for_m
 
 
 on_login = "sass_client.utils.client_sync.enqueue_sync_to_main_app"
+# on_auth = "sass_client.utils.client_sync.block_if_subscription_expired"
+on_session_creation = "sass_client.utils.client_sync.block_if_subscription_expired"

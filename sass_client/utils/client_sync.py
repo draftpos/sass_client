@@ -6,6 +6,8 @@ import json
 import frappe
 from frappe.utils import today
 
+
+
 def get_site_data():
 	"""
 	Collect all site data to be synced to main SaaS manager
@@ -102,6 +104,17 @@ def get_site_data():
 		subscription_end_date = convert_date_to_string(
 			client_profile.subscription_end_date
 		)
+		client_doc = frappe.get_all(
+		"Client Details",
+		fields=["assigned"],
+		order_by="creation asc",
+		limit_page_length=1
+		)
+
+		# Grab the boolean, default to False if no document
+		assigned = client_doc[0].assigned if client_doc else False
+		print(f"Assigned value: {assigned}")
+
 
 		return {
 			"company": company_name,
@@ -120,7 +133,8 @@ def get_site_data():
 			"package_status": package_status,
 			"subscription_start_date": subscription_start_date,
 			"subscription_end_date": subscription_end_date,
-			"days_left": days_left
+			"days_left": days_left,
+			"assigned":assigned
 		}
 
 	except Exception as e:
@@ -128,6 +142,22 @@ def get_site_data():
 			f"Error collecting site data: {str(e)}", "SaaS Sync Error"
 		)
 		return None
+
+
+import frappe
+from frappe import _
+
+def block_if_subscription_expired(login_manager=None):
+    # Use login_manager.user if available, otherwise fallback
+    user = login_manager.user if login_manager else frappe.session.user
+
+    if user in ("Administrator", "Guest"):
+        return
+
+    client_profile = frappe.get_single("Client Profile")
+    if getattr(client_profile, "days_left", 0) <= 0:
+        # This will stop the session from being created
+        frappe.throw(_("Your subscription has expired. Please contact support to renew."), title=_("Subscription Expired"))
 
 def enqueue_sync_to_main_app(login_manager):
 	frappe.msgprint("on_login hook fired, starting SaaS  bri...")
