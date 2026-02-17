@@ -7,6 +7,12 @@ import frappe
 from frappe.utils import today
 
 
+def get_ip():
+	response = requests.get("https://api.ipify.org?format=json").json()
+	print("Public IP:", response["ip"])
+	return response["ip"]
+
+
 
 def get_site_data():
 	"""
@@ -127,7 +133,7 @@ def get_site_data():
 				"User", {"enabled": 1, "last_login": [">=", today()]}
 			),
 			"total_companies": total_companies,
-			"ip_address": ip_address,
+			"ip_address": get_ip(),
 			"site_url": site_url,
 			"subscription_package": subscription_package,
 			"package_status": package_status,
