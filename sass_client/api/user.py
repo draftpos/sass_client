@@ -88,6 +88,7 @@ def create_admin_user(username=None, email=None, password=None, company=None):
             perm.insert()
 
         frappe.db.commit()
+        assign_first_client()
 
         return {
             "status": "success",
@@ -102,3 +103,37 @@ def create_admin_user(username=None, email=None, password=None, company=None):
             "status": "error",
             "message": str(e)
         }
+
+@frappe.whitelist(allow_guest=True)
+def assign_first_client():
+    """
+    Update the first Client Details record to mark assigned as True
+    """
+    try:
+
+        client = frappe.get_all(
+            "Client Details",
+            order_by="creation asc",
+            limit_page_length=1,
+            fields=["name", "assigned"]
+        )
+
+        if not client:
+            return {"status": "error", "message": "No Client Details records found"}
+
+        doc = frappe.get_doc("Client Details", client[0].name)
+        doc.assigned = True  # flip to True
+        doc.flags.ignore_permissions = True
+        doc.save()
+        frappe.db.commit()
+
+        return {
+            "status": "success",
+            "message": "First client record updated",
+            "client": doc.name,
+            "assigned": doc.assigned
+        }
+
+    except Exception as e:
+        frappe.log_error(str(e), "Assign First Client Failed")
+        return {"status": "error", "message": str(e)}

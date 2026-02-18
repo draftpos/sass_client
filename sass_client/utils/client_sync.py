@@ -166,7 +166,6 @@ def block_if_subscription_expired(login_manager=None):
         frappe.throw(_("Your subscription has expired. Please contact support to renew."), title=_("Subscription Expired"))
 
 def enqueue_sync_to_main_app(login_manager):
-	frappe.msgprint("on_login hook fired, starting SaaS  bri...")
 	frappe.enqueue(
 		"sass_client.utils.client_sync.sync_to_main_app",
 		queue="short",
