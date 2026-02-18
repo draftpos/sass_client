@@ -23,8 +23,8 @@ def get_site_data():
 	try:
 		# Get site configuration
 		site_config = frappe.conf
-		main_app_url = site_config.get("saas_manager_url")
-		api_key = site_config.get("saas_api_key")
+		main_app_url ="https://pay.havano.cloud"
+		api_key = ""
 
 		if not main_app_url:
 			frappe.log_error("SaaS Manager URL not configured", "SaaS Sync Error")
@@ -67,7 +67,6 @@ def get_site_data():
 		# Grab the already calculated field
 		days_left = client_profile.days_left
 		print(f"Days left in subscription: {days_left}")
-
 
 		# Count active users today
 		active_users_today = frappe.db.count(
@@ -180,9 +179,8 @@ def sync_to_main_app():
 	"""
 	try:
 		site_config = frappe.conf
-		# main_app_url = site_config.get("saas_manager_url")
 		main_app_url = "https://pay.havano.cloud/"
-		api_key = site_config.get("saas_api_key")
+		api_key = ""
 		
 		if not main_app_url:
 			frappe.log_error("SaaS Manager URL not configured", "SaaS Sync Error")
@@ -245,10 +243,10 @@ def check_user_limit():
 	"""
 	try:
 		site_config = frappe.conf
-		main_app_url = site_config.get("saas_manager_url")
-		api_key = site_config.get("saas_api_key")
+		main_app_url = "https://pay.havano.cloud/"
+		api_key = ""
 		
-		if not main_app_url or not api_key:
+		if not api_key:
 			# If not configured, allow unlimited users
 			return True
 		
@@ -264,7 +262,6 @@ def check_user_limit():
 			headers=headers,
 			timeout=10
 		)
-		
 		if response.status_code == 200:
 			result = response.json()
 			status_data = result.get("message", {})
@@ -294,7 +291,7 @@ def register_client_site(site_name, company=None, client_type="ERP"):
 	"""
 	try:
 		site_config = frappe.conf
-		main_app_url = site_config.get("saas_manager_url")
+		main_app_url = "https://pay.havano.cloud/"
 		
 		if not main_app_url:
 			frappe.log_error("SaaS Manager URL not configured", "SaaS Registration Error")
