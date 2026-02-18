@@ -23,7 +23,8 @@ def get_site_data():
 	try:
 		# Get site configuration
 		site_config = frappe.conf
-		main_app_url ="https://pay.havano.cloud"
+		# main_app_url ="https://pay.havano.cloud"
+		main_app_url = "http://127.0.0.1:8003/"
 		api_key = ""
 
 		if not main_app_url:
@@ -179,7 +180,8 @@ def sync_to_main_app():
 	"""
 	try:
 		site_config = frappe.conf
-		main_app_url = "https://pay.havano.cloud/"
+		# main_app_url = "https://pay.havano.cloud/"
+		main_app_url = "http://127.0.0.1:8003/"
 		api_key = ""
 		
 		if not main_app_url:
@@ -291,7 +293,8 @@ def register_client_site(site_name, company=None, client_type="ERP"):
 	"""
 	try:
 		site_config = frappe.conf
-		main_app_url = "https://pay.havano.cloud/"
+		# main_app_url = "https://pay.havano.cloud/"
+		main_app_url = "http://127.0.0.1:8003/"
 		
 		if not main_app_url:
 			frappe.log_error("SaaS Manager URL not configured", "SaaS Registration Error")
