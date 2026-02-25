@@ -198,14 +198,13 @@
    "default": "0",
    "fieldname": "assigned",
    "fieldtype": "Check",
-   "label": "Assigned",
-   "options": "Yes\nNo"
+   "label": "Assigned"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-16 15:15:16.263572",
+ "modified": "2026-02-25 15:34:43.116376",
  "modified_by": "Administrator",
  "module": "Sass Client",
  "name": "Client Details",

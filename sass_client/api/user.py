@@ -90,6 +90,22 @@ def create_admin_user(username=None, email=None, password=None, company=None):
         frappe.db.commit()
         assign_first_client()
 
+        doc = frappe.get_all(
+            "Client Details",
+            fields=["name"],
+            order_by="creation asc",
+            limit=1
+        )
+
+        if doc:
+            d = frappe.get_doc("Client Details", doc[0].name)
+            d.assigned_to = 1   # or True
+            d.save()
+            frappe.db.commit()
+            print(f"Updated {d.name}")
+        else:
+            print("No records found")
+
         return {
             "status": "success",
             "message": "Admin user and company created successfully",
