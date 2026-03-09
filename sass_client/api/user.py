@@ -1,8 +1,9 @@
 import frappe
-@frappe.whitelist(allow_guest=True)
+
+@frappe.whitelist(allow_guest=True)  # no allow_guest, only logged-in users
 def create_admin_user(username=None, email=None, password=None, company=None):
     """
-    Create a new admin user with full permissions and assign company
+    Create or fetch an admin user with full permissions and assign company
     """
 
     try:
@@ -26,6 +27,24 @@ def create_admin_user(username=None, email=None, password=None, company=None):
             }
 
         # -----------------------------
+        # Update first client if exists
+        # -----------------------------
+        doc = frappe.get_all(
+            "Client Details",
+            fields=["name"],
+            order_by="creation asc",
+            limit=1
+        )
+
+        if doc:
+            d = frappe.get_doc("Client Details", doc[0].name)
+            d.flags.ignore_permissions = True
+            d.assigned_to = 1
+            d.save()
+            frappe.db.commit()
+            print(f"Updated {d.name}")
+
+        # -----------------------------
         # Create company if not exists
         # -----------------------------
         if not frappe.db.exists("Company", company):
@@ -38,36 +57,33 @@ def create_admin_user(username=None, email=None, password=None, company=None):
             company_doc.insert()
 
         # -----------------------------
-        # Check if user exists
+        # Get or create user
         # -----------------------------
-        if frappe.db.exists("User", email):
-            return {
-                "status": "error",
-                "message": "User already exists"
-            }
+        user_doc = frappe.db.exists("User", email)
+        if user_doc:
+            user = frappe.get_doc("User", email)
+            user_created = False
+        else:
+            user = frappe.get_doc({
+                "doctype": "User",
+                "email": email,
+                "first_name": username,
+                "enabled": 1,
+                "new_password": password,
+                "send_welcome_email": 0
+            })
+            user.flags.ignore_permissions = True
+            user.insert(ignore_permissions=True)
+            user_created = True
 
         # -----------------------------
-        # Create user
+        # Assign System Manager role
         # -----------------------------
-        user = frappe.get_doc({
-            "doctype": "User",
-            "email": email,
-            "first_name": username,
-            "enabled": 1,
-            "new_password": password,
-            "send_welcome_email": 0
-        })
-
-        user.flags.ignore_permissions = True
-        user.insert(ignore_permissions=True)
+        if "System Manager" not in [r.role for r in user.get("roles")]:
+            user.add_roles("System Manager")
 
         # -----------------------------
-        # Assign full admin role
-        # -----------------------------
-        user.add_roles("System Manager")
-
-        # -----------------------------
-        # Set company permission
+        # Ensure company permission
         # -----------------------------
         if not frappe.db.exists(
             "User Permission",
@@ -88,37 +104,25 @@ def create_admin_user(username=None, email=None, password=None, company=None):
             perm.insert()
 
         frappe.db.commit()
-        assign_first_client()
+        assign_first_client()  # your existing function
 
-        doc = frappe.get_all(
-            "Client Details",
-            fields=["name"],
-            order_by="creation asc",
-            limit=1
-        )
-
-        if doc:
-            d = frappe.get_doc("Client Details", doc[0].name)
-            d.assigned_to = 1   # or True
-            d.save()
-            frappe.db.commit()
-            print(f"Updated {d.name}")
-        else:
-            print("No records found")
-
+        # -----------------------------
+        # Single return
+        # -----------------------------
         return {
             "status": "success",
-            "message": "Admin user and company created successfully",
+            "message": f"Admin user {email} {'created' if user_created else 'already exists'} and company {company} ensured",
             "email": email,
             "company": company
         }
 
     except Exception as e:
-        frappe.log_error(frappe.get_traceback(), "Create Admin User Failed")
+        frappe.log_error(frappe.get_traceback(), "create_admin_user")
         return {
             "status": "error",
             "message": str(e)
         }
+
 
 @frappe.whitelist(allow_guest=True)
 def assign_first_client():
