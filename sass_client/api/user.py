@@ -1,5 +1,18 @@
 import frappe
 
+def get_unique_company_abbr(company):
+    base_abbr = "".join(word[0] for word in company.split()).upper()
+
+    abbr = base_abbr
+    counter = 1
+
+    while frappe.db.exists("Company", {"abbr": abbr}):
+        abbr = f"{base_abbr}{counter}"
+        counter += 1
+
+    return abbr
+
+
 @frappe.whitelist(allow_guest=True)  # no allow_guest, only logged-in users
 def create_admin_user(username=None, email=None, password=None, company=None):
     """
@@ -46,16 +59,18 @@ def create_admin_user(username=None, email=None, password=None, company=None):
 
         # -----------------------------
         # Create company if not exists
-        # -----------------------------
         if not frappe.db.exists("Company", company):
-            company_doc = frappe.get_doc({
-                "doctype": "Company",
-                "company_name": company,
-                "default_currency": "USD"
-            })
-            company_doc.flags.ignore_permissions = True
-            company_doc.insert()
+        abbr = get_unique_company_abbr(company)
 
+        company_doc = frappe.get_doc({
+            "doctype": "Company",
+            "company_name": company,
+            "abbr": abbr,
+            "default_currency": "USD"
+        })
+
+        company_doc.flags.ignore_permissions = True
+        company_doc.insert(ignore_permissions=True)
         # -----------------------------
         # Get or create user
         # -----------------------------
