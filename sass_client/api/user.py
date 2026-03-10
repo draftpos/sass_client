@@ -60,14 +60,14 @@ def create_admin_user(username=None, email=None, password=None, company=None):
         # -----------------------------
         # Create company if not exists
         if not frappe.db.exists("Company", company):
-        abbr = get_unique_company_abbr(company)
+            abbr = get_unique_company_abbr(company)
 
-        company_doc = frappe.get_doc({
-            "doctype": "Company",
-            "company_name": company,
-            "abbr": abbr,
-            "default_currency": "USD"
-        })
+            company_doc = frappe.get_doc({
+                "doctype": "Company",
+                "company_name": company,
+                "abbr": abbr,
+                "default_currency": "USD"
+            })
 
         company_doc.flags.ignore_permissions = True
         company_doc.insert(ignore_permissions=True)
