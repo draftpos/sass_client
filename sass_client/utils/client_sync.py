@@ -110,15 +110,8 @@ def get_site_data():
 		subscription_end_date = convert_date_to_string(
 			client_profile.subscription_end_date
 		)
-		client_doc = frappe.get_all(
-		"Client Details",
-		fields=["assigned"],
-		order_by="creation asc",
-		limit_page_length=1
-		)
-
-		# Grab the boolean, default to False if no document
-		assigned = client_doc[0].assigned if client_doc else False
+		client_doc = frappe.get_single("client detail")
+		assigned = client_doc.assigned or False
 		print(f"Assigned value: {assigned}")
 
 
@@ -203,6 +196,7 @@ def sync_to_main_app():
 		
 		# Get site data
 		data = get_site_data()
+		print(data)
 		if not data:
 			return
 		
@@ -223,6 +217,7 @@ def sync_to_main_app():
 			headers=headers,
 			timeout=30
 		)
+		print(f"Sync response status: {response.status_code}, response text: {response.text}")
 		
 		if response.status_code == 200:
 			result = response.json()

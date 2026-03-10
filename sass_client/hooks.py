@@ -83,7 +83,7 @@ app_license = "mit"
 # ------------
 
 # before_install = "sass_client.install.before_install"
-# after_install = "sass_client.install.after_install"
+after_install = "sass_client.sass_client.doctype.client_detail.client_detail.initialize_client_details"
 
 # Uninstallation
 # ------------

@@ -1,7 +1,7 @@
 {
  "actions": [],
  "autoname": "autoincrement",
- "creation": "2026-02-11 14:30:13.212508",
+ "creation": "2026-03-09 23:24:42.684310",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -51,6 +51,12 @@
    "label": "URL"
   },
   {
+   "fieldname": "product_type",
+   "fieldtype": "Link",
+   "label": "Product Type",
+   "options": "Product Type"
+  },
+  {
    "fieldname": "column_break_qgsw",
    "fieldtype": "Column Break"
   },
@@ -66,7 +72,32 @@
    "options": "Company"
   },
   {
+   "default": "0",
+   "fieldname": "assigned",
+   "fieldtype": "Check",
+   "label": "Assigned"
+  },
+  {
    "fieldname": "section_break_kcgz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "date_filter",
+   "fieldtype": "Date",
+   "label": "Date Filter"
+  },
+  {
+   "fieldname": "column_break_etlh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "filter_type",
+   "fieldtype": "Select",
+   "label": "Filter Type",
+   "options": "On Day\nUp To Date"
+  },
+  {
+   "fieldname": "section_break_jfmr",
    "fieldtype": "Section Break"
   },
   {
@@ -75,8 +106,9 @@
    "label": "Total Sales Invoices Count "
   },
   {
-   "fieldname": "section_break_jfmr",
-   "fieldtype": "Section Break"
+   "fieldname": "total_purchases_count",
+   "fieldtype": "Int",
+   "label": "Total Purchases Count"
   },
   {
    "fieldname": "column_break_rhzt",
@@ -86,11 +118,6 @@
    "fieldname": "total_sales_invoices_amount",
    "fieldtype": "Int",
    "label": "Total Sales Invoices Amount"
-  },
-  {
-   "fieldname": "total_purchases_count",
-   "fieldtype": "Int",
-   "label": "Total Purchases Count"
   },
   {
    "fieldname": "total_purchase_invoice_value",
@@ -172,42 +199,16 @@
    "fieldtype": "Select",
    "label": "Any Transaction Today",
    "options": "No\nYes"
-  },
-  {
-   "fieldname": "column_break_etlh",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "filter_type",
-   "fieldtype": "Select",
-   "label": "Filter Type",
-   "options": "On Day\nUp To Date"
-  },
-  {
-   "fieldname": "date_filter",
-   "fieldtype": "Date",
-   "label": "Date Filter"
-  },
-  {
-   "fieldname": "product_type",
-   "fieldtype": "Link",
-   "label": "Product Type",
-   "options": "Product Type"
-  },
-  {
-   "default": "0",
-   "fieldname": "assigned",
-   "fieldtype": "Check",
-   "label": "Assigned"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
+ "issingle": 1,
  "links": [],
- "modified": "2026-02-26 15:54:54.453132",
+ "modified": "2026-03-09 23:24:42.684310",
  "modified_by": "Administrator",
  "module": "Sass Client",
- "name": "Client Details",
+ "name": "client detail",
  "naming_rule": "Autoincrement",
  "owner": "Administrator",
  "permissions": [
@@ -215,10 +216,8 @@
    "create": 1,
    "delete": 1,
    "email": 1,
-   "export": 1,
    "print": 1,
    "read": 1,
-   "report": 1,
    "role": "System Manager",
    "share": 1,
    "write": 1
@@ -227,10 +226,8 @@
    "create": 1,
    "delete": 1,
    "email": 1,
-   "export": 1,
    "print": 1,
    "read": 1,
-   "report": 1,
    "role": "Guest",
    "share": 1,
    "write": 1

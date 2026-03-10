@@ -75,6 +75,25 @@ def get_transaction_counts(date_filter=None):
         "active_users": frappe.db.count("User", {"enabled": 1, "name": ["!=", "Guest"]})
     }
 
+
+def initialize_client_details():
+    # Use get_doc to ensure the controller class (clientdetail) is instantiated
+    doc = frappe.get_doc("client detail")
+    
+    # Optional: Ensure defaults are set if the doc is empty
+    if not doc.filter_type:
+        doc.filter_type = "Up To Date"
+        
+    # touch or update one field
+    doc.assigned = False
+    
+    # ignore_permissions is fine, but ensure you aren't skipping 
+    # mandatory field validation that the UI would catch
+    doc.save(ignore_permissions=True)
+    
+    # Commit to DB if running from a standalone script
+    frappe.db.commit()
+	
 def get_site_data(date_filter=None):
     data = {}
     data.update(get_basic_site_info())
@@ -83,7 +102,7 @@ def get_site_data(date_filter=None):
     return data
 
 # --- DocType ---
-class ClientDetails(Document):
+class clientdetail(Document):
     def before_save(self):
         self.calculate_totals()
 
