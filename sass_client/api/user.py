@@ -42,20 +42,12 @@ def create_admin_user(username=None, email=None, password=None, company=None):
         # -----------------------------
         # Update first client if exists
         # -----------------------------
-        doc = frappe.get_all(
-            "client detail",
-            fields=["name"],
-            order_by="creation asc",
-            limit=1
-        )
-
-        if doc:
-            d = frappe.get_doc("client detail", doc[0].name)
-            d.flags.ignore_permissions = True
-            d.assigned_to = 1
-            d.save()
-            frappe.db.commit()
-            print(f"Updated {d.name}")
+        d = frappe.get_single("client detail")
+        d.flags.ignore_permissions = True
+        d.assigned_to = 1
+        d.save()
+        frappe.db.commit()
+        print(f"Updated {d.name}")
 
         # -----------------------------
         # Create company if not exists
@@ -69,8 +61,8 @@ def create_admin_user(username=None, email=None, password=None, company=None):
                 "default_currency": "USD"
             })
 
-        company_doc.flags.ignore_permissions = True
-        company_doc.insert(ignore_permissions=True)
+            company_doc.flags.ignore_permissions = True
+            company_doc.insert(ignore_permissions=True)
         # -----------------------------
         # Get or create user
         # -----------------------------
@@ -146,12 +138,7 @@ def assign_first_client():
     """
     try:
 
-        client = frappe.get_all(
-            "client detail",
-            order_by="creation asc",
-            limit_page_length=1,
-            fields=["name", "assigned"]
-        )
+        doc = frappe.get_single("client detail")
 
         if not client:
             return {"status": "error", "message": "No client detail records found"}
