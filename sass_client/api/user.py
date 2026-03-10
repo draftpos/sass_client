@@ -43,14 +43,14 @@ def create_admin_user(username=None, email=None, password=None, company=None):
         # Update first client if exists
         # -----------------------------
         doc = frappe.get_all(
-            "Client Details",
+            "client detail",
             fields=["name"],
             order_by="creation asc",
             limit=1
         )
 
         if doc:
-            d = frappe.get_doc("Client Details", doc[0].name)
+            d = frappe.get_doc("client detail", doc[0].name)
             d.flags.ignore_permissions = True
             d.assigned_to = 1
             d.save()
@@ -142,21 +142,21 @@ def create_admin_user(username=None, email=None, password=None, company=None):
 @frappe.whitelist(allow_guest=True)
 def assign_first_client():
     """
-    Update the first Client Details record to mark assigned as True
+    Update the first client detail record to mark assigned as True
     """
     try:
 
         client = frappe.get_all(
-            "Client Details",
+            "client detail",
             order_by="creation asc",
             limit_page_length=1,
             fields=["name", "assigned"]
         )
 
         if not client:
-            return {"status": "error", "message": "No Client Details records found"}
+            return {"status": "error", "message": "No client detail records found"}
 
-        doc = frappe.get_doc("Client Details", client[0].name)
+        doc = frappe.get_doc("client detail", client[0].name)
         doc.assigned = True  # flip to True
         doc.flags.ignore_permissions = True
         doc.save()
