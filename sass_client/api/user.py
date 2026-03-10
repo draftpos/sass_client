@@ -44,7 +44,7 @@ def create_admin_user(username=None, email=None, password=None, company=None):
         # -----------------------------
         d = frappe.get_single("client detail")
         d.flags.ignore_permissions = True
-        d.assigned_to = 1
+        d.assigned = 1
         d.save()
         frappe.db.commit()
         print(f"Updated {d.name}")
