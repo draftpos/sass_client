@@ -14,7 +14,7 @@ def get_unique_company_abbr(company):
 
 
 @frappe.whitelist(allow_guest=True)  # no allow_guest, only logged-in users
-def create_admin_user(username=None, email=None, password=None, company=None):
+def create_admin_user(username=None, email=None, password=None, company=None,country=None):
     """
     Create or fetch an admin user with full permissions and assign company
     """
@@ -38,6 +38,8 @@ def create_admin_user(username=None, email=None, password=None, company=None):
                 "status": "error",
                 "message": f"Missing required fields: {', '.join(missing)}"
             }
+        if not country:
+            country = "Zimbabwe"
 
         # -----------------------------
         # Update first client if exists
@@ -58,7 +60,8 @@ def create_admin_user(username=None, email=None, password=None, company=None):
                 "doctype": "Company",
                 "company_name": company,
                 "abbr": abbr,
-                "default_currency": "USD"
+                "default_currency": "USD",
+                "country": country 
             })
 
             company_doc.flags.ignore_permissions = True
@@ -132,14 +135,15 @@ def create_admin_user(username=None, email=None, password=None, company=None):
 
 
 @frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=True)
 def assign_first_client():
     """
     Update the first client detail record to mark assigned as True
     """
     try:
-
-        doc = frappe.get_single("client detail")
-
+        # Get the first client detail record
+        client = frappe.get_all("client detail", limit_page_length=1)
+        
         if not client:
             return {"status": "error", "message": "No client detail records found"}
 
